@@ -20,9 +20,10 @@ class CartProductCard extends StatelessWidget {
     // Handle discounts
     final bool hasDiscount =
         product.discountPercentage != null && product.discountPercentage! > 0;
-    final double unitPrice = hasDiscount
-        ? product.price * (1 - product.discountPercentage! / 100)
-        : product.price;
+    final double unitPrice =
+        hasDiscount
+            ? product.price * (1 - product.discountPercentage! / 100)
+            : product.price;
     final double totalPrice = unitPrice * quantity;
 
     return ListTile(
@@ -57,8 +58,19 @@ class CartProductCard extends StatelessWidget {
               Text('$quantity'),
               IconButton(
                 icon: const Icon(Icons.add_circle_outline),
-                onPressed: () {
-                  cartProvider.updateQuantity(productId, quantity + 1);
+                onPressed: () async {
+                  try {
+                    await cartProvider.updateQuantity(
+                      productId,
+                      quantity + 1,
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('This product has limited stock available'),
+                      ),
+                    );
+                  }
                 },
               ),
             ],
