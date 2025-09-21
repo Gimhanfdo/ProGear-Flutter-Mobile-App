@@ -1,53 +1,144 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:progear_mobileapp/models/cart_item.dart';
-import 'package:progear_mobileapp/services/cart_service.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
+import '../models/product.dart';
+
+class CartItem {
+  final Product product;
+  int quantity;
+
+  CartItem({required this.product, required this.quantity});
+}
 
 class CartProvider with ChangeNotifier {
-  List<CartItem> _items = [];
-  bool _isLoading = false;
+  final String _baseUrl = "http://10.0.2.2:8000/api/cart";
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  List<CartItem> get items => _items;
-  bool get isLoading => _isLoading;
+  Map<int, CartItem> _items = {}; // Key: productId
+  Map<int, CartItem> get items => _items;
 
-  double get totalPrice {
-    return _items.fold(
-      0,
-      (sum, item) => sum + (item.product.price * item.quantity),
-    );
+  double get subTotal {
+    return _items.values.fold(
+        0, (sum, item) => sum + _unitPrice(item) * item.quantity);
   }
 
-  Future<void> fetchCart() async {
-    _isLoading = true;
-    notifyListeners();
-    _items = await CartService.getCart();
-    _isLoading = false;
-    notifyListeners();
+  double get vatValue => subTotal * 0.18;
+  double get total => subTotal + vatValue;
+
+  double _unitPrice(CartItem item) {
+    if (item.product.discountPercentage != null &&
+        item.product.discountPercentage! > 0) {
+      return item.product.price * (1 - item.product.discountPercentage! / 100);
+    }
+    return item.product.price;
   }
 
-  //Function to check if product is already added to cart
   bool isInCart(int productId) {
-    return _items.any((item) => item.product.productID == productId);
+    return _items.containsKey(productId);
   }
 
+  // Fetch cart from API
+  Future<void> fetchCart() async {
+    final token = await _storage.read(key: 'auth_token');
+    final response = await http.get(
+      Uri.parse(_baseUrl),
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body)['cart']['items'] as List;
+      _items.clear();
+      for (var item in data) {
+        final productJson = item['product'];
+        final product = Product.fromJson(productJson);
+        _items[product.productID] =
+            CartItem(product: product, quantity: item['quantity']);
+      }
+      notifyListeners();
+    } else {
+      throw Exception('Failed to fetch cart: ${response.body}');
+    }
+  }
+
+  // Add item to cart
   Future<void> addItem(int productId, int quantity) async {
-    await CartService.addItem(productId, quantity);
-    await fetchCart();
+    final token = await _storage.read(key: 'auth_token');
+
+    final response = await http.post(
+      Uri.parse('$_baseUrl/add'),
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+      body: {'product_id': productId.toString(), 'quantity': quantity.toString()},
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body)['cart']['items'] as List;
+      _items.clear();
+      for (var item in data) {
+        final productJson = item['product'];
+        final product = Product.fromJson(productJson);
+        _items[product.productID] =
+            CartItem(product: product, quantity: item['quantity']);
+      }
+      notifyListeners();
+    } else {
+      throw Exception('Failed to add item: ${response.body}');
+    }
   }
 
-  Future<void> updateItem(int itemId, int quantity) async {
-    await CartService.updateItem(itemId, quantity);
-    await fetchCart();
+  // Update quantity
+  Future<void> updateQuantity(int productId, int quantity) async {
+    if (!_items.containsKey(productId)) return;
+
+    final token = await _storage.read(key: 'auth_token');
+
+    final response = await http.put(
+      Uri.parse('$_baseUrl/update/$productId'),
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+      body: {'quantity': quantity.toString()},
+    );
+
+    if (response.statusCode == 200) {
+      _items[productId]!.quantity = quantity;
+      notifyListeners();
+    } else {
+      throw Exception('Failed to update quantity: ${response.body}');
+    }
   }
 
-  Future<void> removeItem(int itemId) async {
-    await CartService.removeItem(itemId);
-    _items.removeWhere((i) => i.id == itemId);
-    notifyListeners();
+  // Remove item
+  Future<void> removeItem(int productId) async {
+    if (!_items.containsKey(productId)) return;
+
+    final token = await _storage.read(key: 'auth_token');
+
+    final response = await http.delete(
+      Uri.parse('$_baseUrl/remove/$productId'),
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      _items.remove(productId);
+      notifyListeners();
+    } else {
+      throw Exception('Failed to remove item: ${response.body}');
+    }
   }
 
+  // Clear cart
   Future<void> clearCart() async {
-    await CartService.clearCart();
-    _items.clear();
-    notifyListeners();
+    final token = await _storage.read(key: 'auth_token');
+
+    final response = await http.delete(
+      Uri.parse('$_baseUrl/clear'),
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      _items.clear();
+      notifyListeners();
+    } else {
+      throw Exception('Failed to clear cart: ${response.body}');
+    }
   }
 }
