@@ -5,10 +5,11 @@ import 'package:http/http.dart' as http;
 import '../models/product.dart';
 
 class CartItem {
+  final int id;
   final Product product;
   int quantity;
 
-  CartItem({required this.product, required this.quantity});
+  CartItem({required this.id, required this.product, required this.quantity});
 }
 
 class CartProvider with ChangeNotifier {
@@ -20,7 +21,9 @@ class CartProvider with ChangeNotifier {
 
   double get subTotal {
     return _items.values.fold(
-        0, (sum, item) => sum + _unitPrice(item) * item.quantity);
+      0,
+      (sum, item) => sum + _unitPrice(item) * item.quantity,
+    );
   }
 
   double get vatValue => subTotal * 0.18;
@@ -52,8 +55,12 @@ class CartProvider with ChangeNotifier {
       for (var item in data) {
         final productJson = item['product'];
         final product = Product.fromJson(productJson);
-        _items[product.productID] =
-            CartItem(product: product, quantity: item['quantity']);
+        final cartItemId = item['id']; // backend cart item ID
+        _items[product.productID] = CartItem(
+          id: cartItemId,
+          product: product,
+          quantity: item['quantity'],
+        );
       }
       notifyListeners();
     } else {
@@ -72,15 +79,7 @@ class CartProvider with ChangeNotifier {
     );
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body)['cart']['items'] as List;
-      _items.clear();
-      for (var item in data) {
-        final productJson = item['product'];
-        final product = Product.fromJson(productJson);
-        _items[product.productID] =
-            CartItem(product: product, quantity: item['quantity']);
-      }
-      notifyListeners();
+      await fetchCart(); // refresh cart after adding
     } else {
       throw Exception('Failed to add item: ${response.body}');
     }
@@ -90,10 +89,11 @@ class CartProvider with ChangeNotifier {
   Future<void> updateQuantity(int productId, int quantity) async {
     if (!_items.containsKey(productId)) return;
 
+    final cartItemId = _items[productId]!.id;
     final token = await _storage.read(key: 'auth_token');
 
     final response = await http.put(
-      Uri.parse('$_baseUrl/update/$productId'),
+      Uri.parse('$_baseUrl/update/$cartItemId'),
       headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
       body: {'quantity': quantity.toString()},
     );
@@ -110,10 +110,11 @@ class CartProvider with ChangeNotifier {
   Future<void> removeItem(int productId) async {
     if (!_items.containsKey(productId)) return;
 
+    final cartItemId = _items[productId]!.id;
     final token = await _storage.read(key: 'auth_token');
 
     final response = await http.delete(
-      Uri.parse('$_baseUrl/remove/$productId'),
+      Uri.parse('$_baseUrl/remove/$cartItemId'),
       headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
     );
 
