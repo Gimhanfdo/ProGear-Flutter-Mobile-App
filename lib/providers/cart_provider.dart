@@ -1,21 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as http;
 import '../models/product.dart';
-
-class CartItem {
-  final int id;
-  final Product product;
-  int quantity;
-
-  CartItem({required this.id, required this.product, required this.quantity});
-}
+import '../services/cart_service.dart';
+import '../models/cart_item.dart';
 
 class CartProvider with ChangeNotifier {
-  final String _baseUrl = "http://10.0.2.2:8000/api/cart";
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
-
   Map<int, CartItem> _items = {}; // Key: productId
   Map<int, CartItem> get items => _items;
 
@@ -41,105 +29,65 @@ class CartProvider with ChangeNotifier {
     return _items.containsKey(productId);
   }
 
-  // Fetch cart from API
+  /// 🔹 Fetch cart from API
   Future<void> fetchCart() async {
-    final token = await _storage.read(key: 'auth_token');
-    final response = await http.get(
-      Uri.parse(_baseUrl),
-      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
-    );
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body)['cart']['items'] as List;
-      _items.clear();
-      for (var item in data) {
-        final productJson = item['product'];
-        final product = Product.fromJson(productJson);
-        final cartItemId = item['id']; // backend cart item ID
-        _items[product.productID] = CartItem(
-          id: cartItemId,
-          product: product,
-          quantity: item['quantity'],
-        );
-      }
+    try {
+      final cartItems = await CartService.getCart();
+      _items = {
+        for (var item in cartItems) item.product.productID: item,
+      };
       notifyListeners();
-    } else {
-      throw Exception('Failed to fetch cart: ${response.body}');
+    } catch (e) {
+      throw Exception("Failed to fetch cart: $e");
     }
   }
 
-  // Add item to cart
+  /// 🔹 Add item to cart
   Future<void> addItem(int productId, int quantity) async {
-    final token = await _storage.read(key: 'auth_token');
-
-    final response = await http.post(
-      Uri.parse('$_baseUrl/add'),
-      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
-      body: {'product_id': productId.toString(), 'quantity': quantity.toString()},
-    );
-
-    if (response.statusCode == 200) {
+    try {
+      await CartService.addItem(productId, quantity);
       await fetchCart(); // refresh cart after adding
-    } else {
-      throw Exception('Failed to add item: ${response.body}');
+    } catch (e) {
+      throw Exception("Failed to add item: $e");
     }
   }
 
-  // Update quantity
+  /// 🔹 Update item quantity
   Future<void> updateQuantity(int productId, int quantity) async {
     if (!_items.containsKey(productId)) return;
 
-    final cartItemId = _items[productId]!.id;
-    final token = await _storage.read(key: 'auth_token');
-
-    final response = await http.put(
-      Uri.parse('$_baseUrl/update/$cartItemId'),
-      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
-      body: {'quantity': quantity.toString()},
-    );
-
-    if (response.statusCode == 200) {
+    try {
+      final cartItemId = _items[productId]!.id;
+      await CartService.updateItem(cartItemId, quantity);
       _items[productId]!.quantity = quantity;
       notifyListeners();
-    } else {
-      throw Exception('Failed to update quantity: ${response.body}');
+    } catch (e) {
+      throw Exception("Failed to update quantity: $e");
     }
   }
 
-  // Remove item
+  /// 🔹 Remove item
   Future<void> removeItem(int productId) async {
     if (!_items.containsKey(productId)) return;
 
-    final cartItemId = _items[productId]!.id;
-    final token = await _storage.read(key: 'auth_token');
-
-    final response = await http.delete(
-      Uri.parse('$_baseUrl/remove/$cartItemId'),
-      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
-    );
-
-    if (response.statusCode == 200) {
+    try {
+      final cartItemId = _items[productId]!.id;
+      await CartService.removeItem(cartItemId);
       _items.remove(productId);
       notifyListeners();
-    } else {
-      throw Exception('Failed to remove item: ${response.body}');
+    } catch (e) {
+      throw Exception("Failed to remove item: $e");
     }
   }
 
-  // Clear cart
+  /// 🔹 Clear entire cart
   Future<void> clearCart() async {
-    final token = await _storage.read(key: 'auth_token');
-
-    final response = await http.delete(
-      Uri.parse('$_baseUrl/clear'),
-      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
-    );
-
-    if (response.statusCode == 200) {
+    try {
+      await CartService.clearCart();
       _items.clear();
       notifyListeners();
-    } else {
-      throw Exception('Failed to clear cart: ${response.body}');
+    } catch (e) {
+      throw Exception("Failed to clear cart: $e");
     }
   }
 }
