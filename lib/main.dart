@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:progear_mobileapp/providers/cart_provider.dart';
+import 'package:progear_mobileapp/providers/checkout_provider.dart';
 import 'package:progear_mobileapp/screens/login.dart';
 import 'package:provider/provider.dart';
 
@@ -8,6 +9,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => CheckoutProvider()),
       ],
       child: const MyApp(),
     ),
