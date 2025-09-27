@@ -50,7 +50,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
   /// Place order through CheckoutProvider
   Future<void> _placeOrder(BuildContext context) async {
     final checkoutProvider = Provider.of<CheckoutProvider>(context, listen: false);
-    final cartProvider = Provider.of<CartProvider>(context, listen: false);
 
     final shippingAddress = shippingAddressController.text.trim();
     if (shippingAddress.isEmpty) {
