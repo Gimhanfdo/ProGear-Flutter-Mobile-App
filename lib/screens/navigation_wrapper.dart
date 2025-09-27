@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:progear_mobileapp/screens/cart.dart';
 import 'package:progear_mobileapp/screens/home.dart';
+import 'package:progear_mobileapp/screens/news.dart';
 import 'package:progear_mobileapp/screens/products.dart';
-import 'package:progear_mobileapp/screens/profile.dart';
 import 'package:progear_mobileapp/screens/shared/bottom_nav_bar.dart';
 
 class NavigationWrapper extends StatefulWidget {
@@ -19,7 +19,7 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
     const Home(),
     const ProductsPage(),
     const CartPage(),
-    ProfilePage(),
+    NewsPage(),
   ];
 
   @override
