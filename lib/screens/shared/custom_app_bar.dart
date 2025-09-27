@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:progear_mobileapp/screens/profile.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -19,7 +20,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [ //Static notifications icon 
-        IconButton(onPressed: (){}, icon: Icon(Icons.notifications))
+        IconButton(onPressed: () {
+          Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ProfilePage()),
+        );
+        }, icon: Icon(Icons.person))
       ],
     );
   }

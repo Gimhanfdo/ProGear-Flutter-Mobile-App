@@ -44,9 +44,9 @@ class BottomNavBar extends StatelessWidget {
         ),
 
         NavigationDestination(
-          icon: Icon(Icons.person_outlined),
-          selectedIcon: Icon(Icons.person),
-          label: 'Profile',
+          icon: Icon(Icons.newspaper_outlined),
+          selectedIcon: Icon(Icons.newspaper),
+          label: 'News',
         ),
       ],
     );
