@@ -46,6 +46,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: theme.colorScheme.surface,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
