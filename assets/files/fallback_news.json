@@ -1,0 +1,109 @@
+{
+  "articles": [
+    {
+      "title": "Sri Lanka seals historic T20 win over Australia",
+      "description": "Sri Lanka stunned Australia in a thrilling T20 match at the MCG, led by a brilliant bowling display from Wanindu Hasaranga.",
+      "imageAsset": "assets/images/fallback_newsimage.jpg",
+      "source": { "name": "ESPN Cricinfo" },
+      "publishedAt": "2025-09-15T10:00:00Z"
+    },
+    {
+      "title": "Kusal Mendis scores match-winning century against Pakistan",
+      "description": "Kusal Mendis guided Sri Lanka to victory with a magnificent 124 off 98 balls as they chased down 320 in Colombo.",
+      "imageAsset": "assets/images/fallback_newsimage.jpg",
+      "source": { "name": "BBC Sport" },
+      "publishedAt": "2025-09-10T14:00:00Z"
+    },
+    {
+      "title": "Matheesha Pathirana ruled out of Asia Cup with injury",
+      "description": "Sri Lanka fast bowler Matheesha Pathirana has been sidelined due to a shoulder injury, team management confirms.",
+      "imageAsset": "assets/images/fallback_newsimage.jpg",
+      "source": { "name": "The Hindu" },
+      "publishedAt": "2025-09-08T07:30:00Z"
+    },
+    {
+      "title": "Sri Lanka Women clinch ODI series against Bangladesh",
+      "description": "The Sri Lanka Women’s cricket team defeated Bangladesh 2-1, marking their first series win in 2025.",
+      "imageAsset": "assets/images/fallback_newsimage.jpg",
+      "source": { "name": "CricBuzz" },
+      "publishedAt": "2025-09-03T16:45:00Z"
+    },
+    {
+      "title": "Hasaranga rises to No.1 in ICC T20 bowling rankings",
+      "description": "Wanindu Hasaranga continues his exceptional form and climbs to the top of the ICC T20I bowling rankings.",
+      "imageAsset": "assets/images/fallback_newsimage.jpg",
+      "source": { "name": "ICC" },
+      "publishedAt": "2025-08-30T11:00:00Z"
+    },
+    {
+      "title": "Dimuth Karunaratne retires from ODI cricket",
+      "description": "Veteran opener Dimuth Karunaratne has announced his retirement from ODIs to focus on Test cricket and domestic tournaments.",
+      "imageAsset": "assets/images/fallback_newsimage.jpg",
+      "source": { "name": "Daily Mirror Sri Lanka" },
+      "publishedAt": "2025-08-25T09:20:00Z"
+    },
+    {
+      "title": "Sri Lanka to host England for Test series in December",
+      "description": "The Sri Lanka Cricket Board confirmed a two-match Test series against England starting December 2025.",
+      "imageAsset": "assets/images/fallback_newsimage.jpg",
+      "source": { "name": "Sky Sports" },
+      "publishedAt": "2025-08-18T13:00:00Z"
+    },
+    {
+      "title": "Charith Asalanka’s late surge powers Sri Lanka to big total",
+      "description": "Middle-order batsman Charith Asalanka smashed 87 off 60 balls as Sri Lanka posted 340 against Afghanistan.",
+      "imageAsset": "assets/images/fallback_newsimage.jpg",
+      "source": { "name": "CricInfo" },
+      "publishedAt": "2025-08-12T12:15:00Z"
+    },
+    {
+      "title": "Chamari Athapaththu nominated for ICC Women’s Cricketer of the Year",
+      "description": "Sri Lanka’s Chamari Athapaththu has been shortlisted for the ICC Women’s Cricketer of the Year award after a stellar 2025 season.",
+      "imageAsset": "assets/images/fallback_newsimage.jpg",
+      "source": { "name": "ICC" },
+      "publishedAt": "2025-08-10T10:30:00Z"
+    },
+    {
+      "title": "Sri Lanka A secure series win over India A in Galle",
+      "description": "Sri Lanka A won the 3-match unofficial Test series 2-1, with impressive performances from Nipun Dhananjaya and Lasith Croospulle.",
+      "imageAsset": "assets/images/fallback_newsimage.jpg",
+      "source": { "name": "The Island" },
+      "publishedAt": "2025-08-05T08:00:00Z"
+    },
+    {
+      "title": "Angelo Mathews returns for Test series against New Zealand",
+      "description": "All-rounder Angelo Mathews makes a comeback to the Sri Lankan Test squad after recovering from a hamstring injury.",
+      "imageAsset": "assets/images/fallback_newsimage.jpg",
+      "source": { "name": "Colombo Gazette" },
+      "publishedAt": "2025-07-30T18:45:00Z"
+    },
+    {
+      "title": "Sri Lanka U19 team to tour South Africa in November",
+      "description": "Sri Lanka’s U19 side will play five youth ODIs against South Africa U19 as part of their World Cup preparations.",
+      "imageAsset": "assets/images/fallback_newsimage.jpg",
+      "source": { "name": "Daily News" },
+      "publishedAt": "2025-07-25T09:50:00Z"
+    },
+    {
+      "title": "SLPL 2025: Galle Gladiators crowned champions",
+      "description": "The Galle Gladiators defeated Jaffna Kings by 22 runs to lift the 2025 Sri Lanka Premier League title.",
+      "imageAsset": "assets/images/fallback_newsimage.jpg",
+      "source": { "name": "NewsFirst" },
+      "publishedAt": "2025-07-20T19:30:00Z"
+    },
+    {
+      "title": "Sri Lanka eye 2027 World Cup qualification boost",
+      "description": "After a string of wins, Sri Lanka is now in contention for direct qualification to the 2027 Cricket World Cup.",
+      "imageAsset": "assets/images/fallback_newsimage.jpg",
+      "source": { "name": "The Papare" },
+      "publishedAt": "2025-07-15T13:10:00Z"
+    },
+    {
+      "title": "Malinga joins Sri Lanka coaching staff as bowling consultant",
+      "description": "Lasith Malinga has officially joined the Sri Lanka national team setup as a bowling consultant ahead of the T20 World Cup.",
+      "imageAsset": "assets/images/fallback_newsimage.jpg",
+      "source": { "name": "CricBuzz" },
+      "publishedAt": "2025-07-10T11:45:00Z"
+    }
+  ]
+}

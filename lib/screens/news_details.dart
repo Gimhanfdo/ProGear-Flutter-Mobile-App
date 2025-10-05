@@ -12,6 +12,7 @@ class NewsDetailsPage extends StatelessWidget {
     final String? imageUrl = article["urlToImage"];
     final String source = article["source"]["name"] ?? "Unknown Source";
     final String publishedAt = article["publishedAt"] ?? "";
+    final String? imageAsset = article["imageAsset"];
 
     String formattedDate = "";
     if (publishedAt.isNotEmpty) {
@@ -25,14 +26,12 @@ class NewsDetailsPage extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("News Details"),
-      ),
+      appBar: AppBar(title: const Text("News Details")),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (imageUrl != null)
+            if ((imageUrl != null) || (imageAsset != null))
               Container(
                 margin: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -40,12 +39,20 @@ class NewsDetailsPage extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: 220,
-                  ),
+                  child:
+                      imageUrl != null
+                          ? Image.network(
+                            imageUrl,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: 220,
+                          )
+                          : Image.asset(
+                            imageAsset!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: 220,
+                          ),
                 ),
               ),
             Padding(
@@ -75,8 +82,11 @@ class NewsDetailsPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      Icon(Icons.access_time,
-                          size: 16, color: Colors.grey.shade600),
+                      Icon(
+                        Icons.access_time,
+                        size: 16,
+                        color: Colors.grey.shade600,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         formattedDate,
@@ -90,10 +100,7 @@ class NewsDetailsPage extends StatelessWidget {
                   const SizedBox(height: 20),
                   Text(
                     description,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      height: 1.5,
-                    ),
+                    style: const TextStyle(fontSize: 16, height: 1.5),
                   ),
                 ],
               ),

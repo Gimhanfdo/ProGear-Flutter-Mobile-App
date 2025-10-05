@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:progear_mobileapp/screens/shared/custom_app_bar.dart';
 import '../services/news_service.dart';
 import 'news_details.dart';
+import '../utils/connectivity_helper.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({super.key});
@@ -17,6 +18,7 @@ class _NewsPageState extends State<NewsPage> {
   @override
   void initState() {
     super.initState();
+    showConnectivitySnackBar(context);
     _newsFuture = _newsService.fetchCricketNews();
   }
 
@@ -44,6 +46,7 @@ class _NewsPageState extends State<NewsPage> {
               final title = article["title"] ?? "No Title";
               final imageUrl = article["urlToImage"];
               final publishedAt = article["publishedAt"];
+              final imageAsset = article["imageAsset"];
 
               // Format published date
               String formattedDate = "";
@@ -62,7 +65,7 @@ class _NewsPageState extends State<NewsPage> {
                 child: ListTile(
                   leading: imageUrl != null
                       ? Image.network(imageUrl, width: 60, fit: BoxFit.cover)
-                      : const Icon(Icons.article, size: 40),
+                      : Image.asset(imageAsset, width: 60, fit: BoxFit.cover),
                   title: Text(
                     title,
                     maxLines: 2,
