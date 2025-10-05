@@ -2,9 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:progear_mobileapp/models/product.dart';
 import 'package:progear_mobileapp/providers/cart_provider.dart';
-import 'package:progear_mobileapp/screens/cart.dart';
 import 'package:progear_mobileapp/screens/shared/product_card.dart';
 import 'package:progear_mobileapp/services/product_service.dart';
+import 'package:progear_mobileapp/screens/add_review_page.dart';
+import 'package:progear_mobileapp/screens/shared/reviews_section.dart';
 import 'package:provider/provider.dart';
 
 class ProductDetailsPage extends StatefulWidget {
@@ -56,13 +57,18 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         title: Text("Product Details"),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          final result = await Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => CartPage()),
+            MaterialPageRoute(
+              builder: (context) => AddReviewPage(productId: widget.productId),
+            ),
           );
+          if (result == true) {
+            setState(() {}); // Refresh reviews after returning
+          }
         },
-        child: Icon(Icons.shopping_cart),
+        child: const Icon(Icons.rate_review),
       ),
       body: FutureBuilder<Product>(
         future: _productFuture,
@@ -217,10 +223,13 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 ),
 
                 const SizedBox(height: 16),
-                
+
                 // Add to cart
                 ElevatedButton(
-                  onPressed: isOutOfStock || quantityCount == 0 || cartProvider.isInCart(product.productID)
+                  onPressed:
+                      isOutOfStock ||
+                              quantityCount == 0 ||
+                              cartProvider.isInCart(product.productID)
                           ? null
                           : () async {
                             try {
@@ -310,6 +319,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         const SizedBox(height: 20),
                         productDescription,
                         const SizedBox(height: 20),
+                        ReviewsSection(productId: product.productID),
+                        const SizedBox(height: 20),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
@@ -332,7 +343,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         productInfo,
                         const SizedBox(height: 20),
                         productDescription,
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 20),
+                        ReviewsSection(productId: product.productID),
+                        const SizedBox(height: 20),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
