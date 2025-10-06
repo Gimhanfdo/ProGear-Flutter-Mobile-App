@@ -4,6 +4,7 @@ import 'package:progear_mobileapp/models/product.dart';
 import 'package:progear_mobileapp/providers/cart_provider.dart';
 import 'package:progear_mobileapp/screens/shared/product_card.dart';
 import 'package:progear_mobileapp/services/product_service.dart';
+import 'package:progear_mobileapp/services/wishlist_service.dart';
 import 'package:progear_mobileapp/screens/add_review_page.dart';
 import 'package:progear_mobileapp/screens/shared/reviews_section.dart';
 import 'package:provider/provider.dart';
@@ -20,11 +21,13 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   late Future<Product> _productFuture;
   late Future<List<Product>> _relatedProductsFuture;
   int quantityCount = 0;
+  bool isInWishlist = false;
 
   @override
   void initState() {
     super.initState();
     _productFuture = ProductService.getProductById(widget.productId);
+    _checkIfInWishlist();
   }
 
   void decreaseQuantity() {
@@ -36,6 +39,13 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   void increaseQuantity(int maxQty) {
     setState(() {
       if (quantityCount < maxQty) quantityCount++;
+    });
+  }
+
+  Future<void> _checkIfInWishlist() async {
+    final wishlist = await WishlistService.getWishlist();
+    setState(() {
+      isInWishlist = wishlist.any((p) => p.productID == widget.productId);
     });
   }
 
@@ -225,48 +235,99 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 const SizedBox(height: 16),
 
                 // Add to cart
-                ElevatedButton(
-                  onPressed:
-                      isOutOfStock ||
-                              quantityCount == 0 ||
-                              cartProvider.isInCart(product.productID)
-                          ? null
-                          : () async {
-                            try {
-                              // Call addItem with productId and quantity
-                              await cartProvider.addItem(
-                                product.productID,
-                                quantityCount,
-                              );
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: ElevatedButton(
+                        onPressed:
+                            isOutOfStock ||
+                                    quantityCount == 0 ||
+                                    cartProvider.isInCart(product.productID)
+                                ? null
+                                : () async {
+                                  try {
+                                    // Call addItem with productId and quantity
+                                    await cartProvider.addItem(
+                                      product.productID,
+                                      quantityCount,
+                                    );
 
-                              // Show confirmation
+                                    // Show confirmation
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Product added to cart!'),
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Failed to add to cart: $e',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(
+                                context,
+                              ).colorScheme.onPrimaryFixedVariant,
+                        ),
+                        child: Text(
+                          cartProvider.isInCart(product.productID)
+                              ? 'Already in Cart'
+                              : 'Add to Cart',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      flex: 1,
+                      child: IconButton(
+                        icon: Icon(
+                          isInWishlist ? Icons.favorite : Icons.favorite_border,
+                          color: isInWishlist ? Colors.red : Colors.grey,
+                          size: 32,
+                        ),
+                        onPressed: () async {
+                          try {
+                            if (isInWishlist) {
+                              await WishlistService.removeItem(product.productID);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Product added to cart!'),
+                                  content: Text('Removed from wishlist'),
                                 ),
                               );
-                            } catch (e) {
+                            } else {
+                              await WishlistService.addItem(product);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Failed to add to cart: $e'),
+                                const SnackBar(
+                                  content: Text('Added to wishlist'),
                                 ),
                               );
                             }
-                          },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.onPrimaryFixedVariant,
-                  ),
-                  child: Text(
-                    cartProvider.isInCart(product.productID)
-                        ? 'Already in Cart'
-                        : 'Add to Cart',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      
+                            setState(() {
+                              isInWishlist = !isInWishlist;
+                            });
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Error updating wishlist: $e'),
+                              ),
+                            );
+                          }
+                        },
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
