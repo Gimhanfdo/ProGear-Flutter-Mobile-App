@@ -3,12 +3,12 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
 import '../providers/cart_provider.dart';
 import '../providers/checkout_provider.dart';
 import '../screens/shared/checkout_product_card.dart';
 import '../screens/shared/text_field.dart';
 import '../screens/shared/error_alert_dialog.dart';
+import '../services/biometric_service.dart';
 import 'navigation_wrapper.dart';
 
 class CheckoutPage extends StatefulWidget {
@@ -307,7 +307,27 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     onPressed:
                         checkoutProvider.isLoading
                             ? null
-                            : () => _placeOrder(context),
+                            : () async {
+                              final biometricService = BiometricService();
+
+                              // Step 1: Authenticate user
+                              final isAuthenticated =
+                                  await biometricService.authenticateUser();
+
+                              if (!isAuthenticated) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      "Authentication failed or cancelled.",
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              // Step 2: If successful, place the order
+                              await _placeOrder(context);
+                            },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal,
                     ),
