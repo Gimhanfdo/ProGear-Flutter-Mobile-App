@@ -5,10 +5,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  static const String baseUrl = "https://progear-laravel-website-production.up.railway.app/api";
+  static const String baseUrl =
+      "https://progear-laravel-website-production.up.railway.app/api";
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  /// Register user
+  // Register user
   Future<bool> register(
     String name,
     String email,
@@ -46,7 +47,7 @@ class AuthService {
     }
   }
 
-  /// Login user
+  // Login user
   Future<bool> login(String email, String password) async {
     try {
       final response = await http.post(
@@ -63,7 +64,10 @@ class AuthService {
 
         // Save token
         await _storage.write(key: 'auth_token', value: data['token']);
-        await _storage.write(key: 'user_id', value: data['user']['id'].toString());
+        await _storage.write(
+          key: 'user_id',
+          value: data['user']['id'].toString(),
+        );
         return true;
       } else {
         print('Login failed: ${response.body}');
@@ -75,7 +79,7 @@ class AuthService {
     }
   }
 
-  /// Logout user
+  // Logout user
   Future<void> logout() async {
     try {
       final token = await _storage.read(key: 'auth_token');
@@ -95,12 +99,12 @@ class AuthService {
     }
   }
 
-  /// Get token
+  // Get token
   Future<String?> getToken() async {
     return await _storage.read(key: 'auth_token');
   }
 
-  /// Check if logged in
+  // Check if logged in
   Future<bool> isLoggedIn() async {
     final token = await _storage.read(key: 'auth_token');
     return token != null;
@@ -113,10 +117,7 @@ class AuthService {
 
     final response = await http.get(
       Uri.parse('$baseUrl/me'),
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
+      headers: {'Accept': 'application/json', 'Authorization': 'Bearer $token'},
     );
 
     if (response.statusCode == 200) {
