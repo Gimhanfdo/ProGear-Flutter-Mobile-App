@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:progear_mobileapp/screens/profile.dart';
+import 'package:progear_mobileapp/screens/wishlist.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -19,17 +20,30 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-      actions: [ //Static notifications icon 
-        IconButton(onPressed: () {
-          Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const ProfilePage()),
-        );
-        }, icon: Icon(Icons.person))
+      actions: [
+        //Static notifications icon
+        IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ProfilePage()),
+            );
+          },
+          icon: Icon(Icons.person),
+        ),
+        IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const WishlistPage()),
+            );
+          },
+          icon: Icon(Icons.heat_pump_rounded),
+        ),
       ],
     );
   }
-  
+
   @override
   // TODO: implement preferredSize
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
