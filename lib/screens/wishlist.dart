@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:progear_mobileapp/models/product.dart';
 import 'package:progear_mobileapp/screens/product_details.dart';

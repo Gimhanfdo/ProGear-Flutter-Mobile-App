@@ -13,6 +13,7 @@ class NewsService {
       var connectivityResult = await Connectivity().checkConnectivity();
 
       // If connected
+      // ignore: unrelated_type_equality_checks
       if (connectivityResult != ConnectivityResult.none) {
         final response = await http.get(url);
 
