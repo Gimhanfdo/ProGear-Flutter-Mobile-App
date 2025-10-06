@@ -4,7 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/review.dart';
 
 class ReviewService {
-  static const String baseUrl = "http://10.0.2.2:8000/api/reviews";
+  static const String baseUrl = "https://progear-laravel-website-production.up.railway.app/api/reviews";
   static final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   // Fetch all reviews for a product

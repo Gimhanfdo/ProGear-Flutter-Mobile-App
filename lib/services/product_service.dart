@@ -4,7 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/product.dart';
 
 class ProductService {
-  static const String baseUrl = "http://10.0.2.2:8000/api/products";
+  static const String baseUrl = "https://progear-laravel-website-production.up.railway.app/api/products";
   static final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   //Function to fetch discounted products

@@ -3,7 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  static const String baseUrl = "http://10.0.2.2:8000/api";
+  static const String baseUrl = "https://progear-laravel-website-production.up.railway.app/api";
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   /// Register user
@@ -61,6 +61,7 @@ class AuthService {
 
         // Save token
         await _storage.write(key: 'auth_token', value: data['token']);
+        await _storage.write(key: 'user_id', value: data['user']['id'].toString());
         return true;
       } else {
         print('Login failed: ${response.body}');
@@ -86,6 +87,7 @@ class AuthService {
         );
       }
       await _storage.delete(key: 'auth_token');
+      await _storage.delete(key: 'user_id');
     } catch (e) {
       print('Logout error: $e');
     }

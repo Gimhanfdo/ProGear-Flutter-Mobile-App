@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiService {
-  static const String baseUrl = "http://10.0.2.2:8000/api";
+  static const String baseUrl = "https://progear-laravel-website-production.up.railway.app/api";
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   /// Helper: get auth headers

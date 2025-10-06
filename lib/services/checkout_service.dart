@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class CheckoutService {
-  final String baseUrl = "http://10.0.2.2:8000/api/checkout";
+  final String baseUrl = "https://progear-laravel-website-production.up.railway.app/api/checkout";
   static final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   Future<Map<String, dynamic>> fetchCheckoutData() async {

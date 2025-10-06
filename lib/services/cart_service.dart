@@ -5,7 +5,7 @@ import '../models/product.dart';
 import '../models/cart_item.dart';
 
 class CartService {
-  static const String baseUrl = "http://10.0.2.2:8000/api/cart";
+  static const String baseUrl = "https://progear-laravel-website-production.up.railway.app/api/cart";
   static final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   // Get cart from API
