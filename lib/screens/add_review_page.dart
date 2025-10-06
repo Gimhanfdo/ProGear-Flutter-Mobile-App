@@ -69,6 +69,7 @@ class _AddReviewPageState extends State<AddReviewPage> {
 
     setState(() => _isSubmitting = false);
 
+    if (!mounted) return;
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Review submitted successfully!")),
@@ -128,17 +129,17 @@ class _AddReviewPageState extends State<AddReviewPage> {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: _isSubmitting ? null : _submitReview,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
           child: Text(
             _isSubmitting ? "Submitting..." : "Submit Review",
             style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: theme.colorScheme.primary,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:progear_mobileapp/models/product.dart';
+import 'package:progear_mobileapp/screens/product_details.dart';
 import 'package:progear_mobileapp/screens/shared/custom_app_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:progear_mobileapp/screens/shared/product_card.dart';
+import 'package:progear_mobileapp/screens/wishlist.dart';
 import 'package:progear_mobileapp/services/product_service.dart';
 
 class Home extends StatefulWidget {
@@ -49,9 +51,9 @@ class _HomeState extends State<Home> {
 
               SearchAnchor.bar(
                 barHintText: 'What are you looking for?',
-                
+
                 suggestionsBuilder: (context, controller) {
-                  return const []; 
+                  return const [];
                 },
               ),
 
@@ -79,8 +81,15 @@ class _HomeState extends State<Home> {
                         ),
                         const SizedBox(height: 20),
                         ElevatedButton(
-                          onPressed: () {},
-                          child: Text("View Products"),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const WishlistPage(),
+                              ),
+                            );
+                          },
+                          child: Text("View My Wishlist"),
                         ),
                       ],
                     ),
@@ -115,7 +124,9 @@ class _HomeState extends State<Home> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text("Error: ${snapshot.error}"));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text("No discounted products found."));
+                    return const Center(
+                      child: Text("No discounted products found."),
+                    );
                   }
 
                   final products = snapshot.data!;
@@ -130,13 +141,27 @@ class _HomeState extends State<Home> {
                       crossAxisCount: crossAxisCount,
                       crossAxisSpacing: 12,
                       mainAxisSpacing: 12,
-                      childAspectRatio: screenOrientation == Orientation.landscape
-                          ? (100 / 110)
-                          : (100 / 140),
+                      childAspectRatio:
+                          screenOrientation == Orientation.landscape
+                              ? (100 / 110)
+                              : (100 / 140),
                     ),
                     itemCount: products.length,
                     itemBuilder: (context, index) {
-                      return ProductCard(product: products[index]);
+                      return GestureDetector(
+                        child: ProductCard(product: products[index]),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => ProductDetailsPage(
+                                    productId: products[index].productID,
+                                  ),
+                            ),
+                          );
+                        },
+                      );
                     },
                   );
                 },

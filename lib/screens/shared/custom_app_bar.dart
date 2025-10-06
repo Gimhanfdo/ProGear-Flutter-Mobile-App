@@ -38,13 +38,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               MaterialPageRoute(builder: (_) => const WishlistPage()),
             );
           },
-          icon: Icon(Icons.heat_pump_rounded),
+          icon: Icon(Icons.favorite),
         ),
       ],
     );
   }
 
   @override
-  // TODO: implement preferredSize
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

@@ -21,6 +21,7 @@ class _ReviewsSectionState extends State<ReviewsSection> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return FutureBuilder<List<Review>>(
       future: _reviewsFuture,
       builder: (context, snapshot) {
@@ -29,45 +30,66 @@ class _ReviewsSectionState extends State<ReviewsSection> {
         } else if (snapshot.hasError) {
           return Text("Error: ${snapshot.error}");
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text("No reviews yet.", style: TextStyle(fontSize: 16)),
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Customer Reviews',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  "No reviews yet.",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Divider(color: theme.colorScheme.inversePrimary, thickness: 1),
+              ],
+            ),
           );
         }
 
         final reviews = snapshot.data!;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: const Text(
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
                 'Customer Reviews',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-            ),
-            const SizedBox(height: 10),
-            ...reviews.map((review) {
-              return Card(
-                margin: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  title: Text(review.userName),
-                  subtitle: Text(review.reviewText),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: List.generate(
-                      5,
-                      (i) => Icon(
-                        i < review.reviewRating ? Icons.star : Icons.star_border,
-                        color: Colors.amber,
-                        size: 20,
+              const SizedBox(height: 10),
+              ...reviews.map((review) {
+                return Card(
+                  child: ListTile(
+                    title: Text(review.userName),
+                    subtitle: Text(review.reviewText),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(
+                        5,
+                        (i) => Icon(
+                          i < review.reviewRating
+                              ? Icons.star
+                              : Icons.star_border,
+                          color: Colors.amber,
+                          size: 20,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            }),
-          ],
+                );
+              }),
+              const SizedBox(height: 5),
+              Divider(color: theme.colorScheme.inversePrimary, thickness: 1),
+            ],
+          ),
         );
       },
     );

@@ -56,6 +56,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
+          if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Location permission denied")),
           );
@@ -64,6 +65,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       }
 
       if (permission == LocationPermission.deniedForever) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("Location permissions permanently denied"),
@@ -74,7 +76,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
       // Get location
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
 
       // Convert to address
@@ -82,6 +86,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
         position.latitude,
         position.longitude,
       );
+
+      if (!mounted) return;
 
       if (placemarks.isNotEmpty) {
         final place = placemarks.first;
@@ -92,6 +98,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         });
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Failed to get location: $e")));
@@ -107,6 +114,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
     final shippingAddress = shippingAddressController.text.trim();
     if (shippingAddress.isEmpty) {
+      if (!mounted) return;
       showErrorAlertDialog(context, 'Please enter a shipping address.');
       return;
     }
@@ -116,15 +124,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
     try {
       checkoutProvider.shippingAddress = shippingAddress;
       checkoutProvider.paymentMethod = paymentMethod;
-      final success = await checkoutProvider.placeOrder(
-        // shippingAddress: shippingAddress,
-        // paymentMethod: paymentMethod,
-        // cardType: paymentMethod == 'Card' ? cardType : null,
-        // cardNumber: paymentMethod == 'Card' ? creditCardNumberController.text : null,
-        // expiryDate: paymentMethod == 'Card' ? expiryDateController.text : null,
-        // cvv: paymentMethod == 'Card' ? cvvController.text : null,
-        // totalAmount: cartProvider.total,
-      );
+      final success = await checkoutProvider.placeOrder();
+
+      if (!mounted) return;
 
       if (success && mounted) {
         showDialog(
@@ -153,6 +155,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       showErrorAlertDialog(context, e.toString());
     }
   }
@@ -313,6 +316,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                               // Step 1: Authenticate user
                               final isAuthenticated =
                                   await biometricService.authenticateUser();
+
+                              if (!mounted) return;
 
                               if (!isAuthenticated) {
                                 ScaffoldMessenger.of(context).showSnackBar(

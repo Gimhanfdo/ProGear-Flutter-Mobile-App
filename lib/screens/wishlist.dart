@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:progear_mobileapp/models/product.dart';
+import 'package:progear_mobileapp/screens/product_details.dart';
 import 'package:progear_mobileapp/services/wishlist_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -35,9 +36,13 @@ class _WishlistPageState extends State<WishlistPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Wishlist'),
+        backgroundColor: theme.colorScheme.surface,
+        elevation: 1,
       ),
       body: FutureBuilder<List<Product>>(
         future: _wishlistFuture,
@@ -57,6 +62,10 @@ class _WishlistPageState extends State<WishlistPage> {
               final item = wishlistItems[index];
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 3,
                 child: ListTile(
                   leading: CachedNetworkImage(
                     imageUrl: item.productImage,
@@ -65,11 +74,20 @@ class _WishlistPageState extends State<WishlistPage> {
                     fit: BoxFit.cover,
                   ),
                   title: Text(item.productName),
-                  subtitle: Text('Rs. ${item.price.toStringAsFixed(2)}'),
+                  subtitle: Text('LKR ${item.price.toStringAsFixed(2)}'),
                   trailing: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.redAccent),
+                    icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
                     onPressed: () => _removeFromWishlist(item.productID),
                   ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ProductDetailsPage(productId: item.productID),
+                      ),
+                    );
+                  },
                 ),
               );
             },

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:progear_mobileapp/providers/cart_provider.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +30,12 @@ class CartProductCard extends StatelessWidget {
     return ListTile(
       leading: CircleAvatar(
         radius: 30,
-        backgroundImage: NetworkImage(product.productImage),
+        child: CachedNetworkImage(
+          imageUrl: product.productImage,
+          placeholder:
+              (context, url) => const CircularProgressIndicator(strokeWidth: 2),
+          errorWidget: (context, url, error) => const Icon(Icons.broken_image),
+        ),
       ),
       title: Text(
         product.productName,
@@ -60,14 +66,13 @@ class CartProductCard extends StatelessWidget {
                 icon: const Icon(Icons.add_circle_outline),
                 onPressed: () async {
                   try {
-                    await cartProvider.updateQuantity(
-                      productId,
-                      quantity + 1,
-                    );
+                    await cartProvider.updateQuantity(productId, quantity + 1);
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('This product has limited stock available'),
+                        content: Text(
+                          'This product has limited stock available',
+                        ),
                       ),
                     );
                   }

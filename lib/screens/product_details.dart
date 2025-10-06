@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:progear_mobileapp/models/product.dart';
@@ -58,6 +60,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: theme.colorScheme.surface,
+        elevation: 2,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -439,7 +442,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           return const Text("No related products found");
         }
 
-        final products = snapshot.data!;
+        final products = snapshot.data!.take(6).toList();
         final screenOrientation = MediaQuery.of(context).orientation;
         final crossAxisCount =
             screenOrientation == Orientation.landscape ? 3 : 2;
@@ -461,7 +464,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           itemBuilder: (context, index) {
             final related = products[index];
             return InkWell(
-              splashColor: Colors.tealAccent.withOpacity(0.3),
+              splashColor: Colors.tealAccent.withAlpha((0.3 * 255).round()),
               highlightColor: Colors.transparent,
               child: ProductCard(product: related),
               onTap: () {

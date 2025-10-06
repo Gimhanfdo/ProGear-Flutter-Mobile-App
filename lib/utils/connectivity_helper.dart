@@ -3,6 +3,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 Future<void> showConnectivitySnackBar(BuildContext context) async {
   var result = await Connectivity().checkConnectivity();
+  // ignore: unrelated_type_equality_checks
   if (result == ConnectivityResult.none) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(

@@ -123,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   buttonColor: Colors.grey.shade800,
                   iconPath: 'assets/icons/google.png',
                   onTap: () {
-                    // TODO: Google auth integration
+                    // Google auth integration
                   },
                 ),
 
