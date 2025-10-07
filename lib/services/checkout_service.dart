@@ -6,6 +6,7 @@ class CheckoutService {
   final String baseUrl = "https://progear-laravel-website-production.up.railway.app/api/checkout";
   static final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
+  // Function to retrieve checkout items
   Future<Map<String, dynamic>> fetchCheckoutData() async {
     final token = await _storage.read(key: 'auth_token');
     final response = await http.get(
@@ -18,6 +19,7 @@ class CheckoutService {
     return _handleResponse(response);
   }
 
+  // Function to submit order
   Future<Map<String, dynamic>> submitOrder(Map<String, dynamic> data) async {
     final token = await _storage.read(key: 'auth_token');
     final response = await http.post(

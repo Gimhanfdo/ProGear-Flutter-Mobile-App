@@ -28,7 +28,7 @@ class CartProvider with ChangeNotifier {
     return _items.containsKey(productId);
   }
 
-  /// 🔹 Fetch cart from API
+  // Fetch cart from API
   Future<void> fetchCart() async {
     try {
       final cartItems = await CartService.getCart();
@@ -41,7 +41,7 @@ class CartProvider with ChangeNotifier {
     }
   }
 
-  /// 🔹 Add item to cart
+  // Add item to cart
   Future<void> addItem(int productId, int quantity) async {
     try {
       await CartService.addItem(productId, quantity);
@@ -51,7 +51,7 @@ class CartProvider with ChangeNotifier {
     }
   }
 
-  /// 🔹 Update item quantity
+  // Update cart item quantity
   Future<void> updateQuantity(int productId, int quantity) async {
     if (!_items.containsKey(productId)) return;
 
@@ -65,7 +65,7 @@ class CartProvider with ChangeNotifier {
     }
   }
 
-  /// 🔹 Remove item
+  // Remove a cart item
   Future<void> removeItem(int productId) async {
     if (!_items.containsKey(productId)) return;
 
@@ -79,7 +79,7 @@ class CartProvider with ChangeNotifier {
     }
   }
 
-  /// 🔹 Clear entire cart
+  // Clear cart
   Future<void> clearCart() async {
     try {
       await CartService.clearCart();

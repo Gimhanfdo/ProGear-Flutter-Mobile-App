@@ -71,11 +71,13 @@ class ProductCard extends StatelessWidget {
               ),
             ),
 
+            //Non discounted price
             Text(
               'Rs. ${discountedPrice!.toStringAsFixed(2)}',
               style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
             ),
           ] else ...[
+            //Normal price
             Text(
               'Rs. ${product.price.toStringAsFixed(2)}',
               style: TextStyle(

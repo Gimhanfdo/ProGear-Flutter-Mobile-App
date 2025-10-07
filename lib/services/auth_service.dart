@@ -34,7 +34,7 @@ class AuthService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
 
-        // Save token
+        // Save token in Flutter secure storage
         await _storage.write(key: 'auth_token', value: data['token']);
         return true;
       } else {
@@ -62,7 +62,7 @@ class AuthService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        // Save token
+        // Save token and userID
         await _storage.write(key: 'auth_token', value: data['token']);
         await _storage.write(
           key: 'user_id',
@@ -92,6 +92,7 @@ class AuthService {
           },
         );
       }
+      // Remove token and user ID from secure storage
       await _storage.delete(key: 'auth_token');
       await _storage.delete(key: 'user_id');
     } catch (e) {
@@ -99,18 +100,18 @@ class AuthService {
     }
   }
 
-  // Get token
+  // Function to get token
   Future<String?> getToken() async {
     return await _storage.read(key: 'auth_token');
   }
 
-  // Check if logged in
+  // Function to check if logged in
   Future<bool> isLoggedIn() async {
     final token = await _storage.read(key: 'auth_token');
     return token != null;
   }
 
-  /// Fetch authenticated user
+  // Function to fetch authenticated user
   Future<Map<String, dynamic>> getUser() async {
     final token = await _storage.read(key: 'auth_token');
     if (token == null) throw Exception("Not logged in");

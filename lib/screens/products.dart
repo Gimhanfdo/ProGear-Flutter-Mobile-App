@@ -15,6 +15,7 @@ class ProductsPage extends StatefulWidget {
 class _ProductsPageState extends State<ProductsPage> {
   int isSelected = 0;
 
+  //Display names for porduct categories
   List<String> productCategories = [
     "Cricket Bats",
     "Cricket Balls",
@@ -22,22 +23,25 @@ class _ProductsPageState extends State<ProductsPage> {
     "Other Equipment",
   ];
 
+  // Corresponding database category names
   List<String> databaseProductCategories = ["Bat", "Ball", "Helmet", "Other"];
 
-  late Future<List<Product>> _productsFuture;
+  late Future<List<Product>> _productsFuture; // Future that will hold the list of products fetched
 
   @override
   void initState() {
     super.initState();
+    // Load products for the first category 'Bat' when the page loads
     _productsFuture = ProductService.getProductsByCategory(
       databaseProductCategories[0],
     );
   }
 
+  // Function to load products for the selected category
   void _loadCategory(int index) {
     setState(() {
       isSelected = index;
-      _productsFuture = ProductService.getProductsByCategory(
+      _productsFuture = ProductService.getProductsByCategory( // Fetch products based on selected category
         databaseProductCategories[index],
       );
     });
@@ -54,11 +58,11 @@ class _ProductsPageState extends State<ProductsPage> {
             SizedBox(
               height: 50,
               child: ListView.builder(
-                scrollDirection: Axis.horizontal,
+                scrollDirection: Axis.horizontal, // Horizontal category scroll
                 itemCount: productCategories.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
-                    onTap: () => _loadCategory(index),
+                    onTap: () => _loadCategory(index), // Load selected category on tap
                     child: Container(
                       width: 140,
                       margin: const EdgeInsets.only(right: 10),
@@ -82,16 +86,21 @@ class _ProductsPageState extends State<ProductsPage> {
             ),
             const SizedBox(height: 12),
 
-            // Products Grid
+            //Products grid
             Expanded(
               child: FutureBuilder<List<Product>>(
                 future: _productsFuture,
                 builder: (context, snapshot) {
+                  //Handle loading state
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
+                  }
+                  //Handle error state 
+                  else if (snapshot.hasError) {
                     return Center(child: Text("Error: ${snapshot.error}"));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  }
+                  //Handle empty states 
+                  else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(child: Text("No products found."));
                   }
 
@@ -104,6 +113,7 @@ class _ProductsPageState extends State<ProductsPage> {
                           ? (100 / 110)
                           : (100 / 140);
 
+                  // Display products in a grid view
                   return GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: crossAxisCount,
@@ -121,7 +131,7 @@ class _ProductsPageState extends State<ProductsPage> {
                             context,
                             MaterialPageRoute(
                               builder:
-                                  (context) => ProductDetailsPage(
+                                  (context) => ProductDetailsPage( //Navigates to the product details page when clicked
                                     productId: product.productID,
                                   ),
                             ),

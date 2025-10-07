@@ -6,7 +6,8 @@ class NewsDetailsPage extends StatelessWidget {
   const NewsDetailsPage({super.key, required this.article});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { 
+    // Extracting data from the article map with fallbacks
     final String title = article["title"] ?? "No Title";
     final String description = article["description"] ?? "No Description";
     final String? imageUrl = article["urlToImage"];
@@ -17,7 +18,7 @@ class NewsDetailsPage extends StatelessWidget {
     String formattedDate = "";
     if (publishedAt.isNotEmpty) {
       try {
-        final dateTime = DateTime.parse(publishedAt);
+        final dateTime = DateTime.parse(publishedAt); //Format the published date
         formattedDate =
             "${dateTime.day}-${dateTime.month}-${dateTime.year} ${dateTime.hour}:${dateTime.minute}";
       } catch (e) {
@@ -31,7 +32,7 @@ class NewsDetailsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if ((imageUrl != null) || (imageAsset != null))
+            if ((imageUrl != null) || (imageAsset != null)) // Displays an image if either a network or asset image exists
               Container(
                 margin: const EdgeInsets.all(12),
                 decoration: BoxDecoration(

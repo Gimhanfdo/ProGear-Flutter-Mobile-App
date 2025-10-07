@@ -20,16 +20,18 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
+  //Futures for the product and related products
   late Future<Product> _productFuture;
   late Future<List<Product>> _relatedProductsFuture;
+
   int quantityCount = 0;
   bool isInWishlist = false;
 
   @override
   void initState() {
     super.initState();
-    _productFuture = ProductService.getProductById(widget.productId);
-    _checkIfInWishlist();
+    _productFuture = ProductService.getProductById(widget.productId); // Fetch product data when the page loads
+    _checkIfInWishlist(); // Fetch product data when the page loads
   }
 
   void decreaseQuantity() {
@@ -44,6 +46,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     });
   }
 
+  // Function to check if current product exists in wishlist
   Future<void> _checkIfInWishlist() async {
     final wishlist = await WishlistService.getWishlist();
     setState(() {
@@ -69,12 +72,13 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         ),
         title: Text("Product Details"),
       ),
+      // FAB to add a new review
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           final result = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddReviewPage(productId: widget.productId),
+              builder: (context) => AddReviewPage(productId: widget.productId), //Navigates to the add review page
             ),
           );
           if (result == true) {
@@ -83,19 +87,25 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         },
         child: const Icon(Icons.rate_review),
       ),
+
       body: FutureBuilder<Product>(
         future: _productFuture,
         builder: (context, snapshot) {
+          // Handle loading state
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
+          }
+          // Handle error state 
+          else if (snapshot.hasError) {
             return Center(child: Text("Error: ${snapshot.error}"));
-          } else if (!snapshot.hasData) {
+          }
+          // Handle empty state 
+          else if (!snapshot.hasData) {
             return const Center(child: Text("No product found"));
           }
 
+          // Extract product details
           final product = snapshot.data!;
-
           final bool isOutOfStock = product.quantityAvailable == 0;
           final bool isLimitedStock =
               product.quantityAvailable <= 5 && product.quantityAvailable > 0;
@@ -123,6 +133,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             ),
           );
 
+          //Product info widget
           Widget productInfo = Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -237,7 +248,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
                 const SizedBox(height: 16),
 
-                // Add to cart
+                // Add to cart and add to wishlist buttons
                 Row(
                   children: [
                     Expanded(
@@ -256,7 +267,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                       quantityCount,
                                     );
 
-                                    // Show confirmation
+                                    // Show confirmation message
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text('Product added to cart!'),
@@ -291,6 +302,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       ),
                     ),
                     const SizedBox(width: 10),
+
+                    //Wishlist button
                     Expanded(
                       flex: 1,
                       child: IconButton(
@@ -301,18 +314,18 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         ),
                         onPressed: () async {
                           try {
-                            if (isInWishlist) {
+                            if (isInWishlist) { //When clicked, removes item from the wishlist if item already exists
                               await WishlistService.removeItem(product.productID);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Removed from wishlist'),
                                 ),
                               );
-                            } else {
+                            } else { //Adds to the wishlist
                               await WishlistService.addItem(product);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Added to wishlist'),
+                                  content: Text('Added to wishlist'), 
                                 ),
                               );
                             }
@@ -363,13 +376,13 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child:
-                orientation == Orientation.landscape
+                orientation == Orientation.landscape //If orientation is landscape
                     ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Expanded(
+                            Expanded( //Shows product image on the left side and product info on the right side
                               flex: 2,
                               child: AspectRatio(
                                 aspectRatio: 1,
@@ -399,7 +412,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         _buildRelatedProducts(),
                       ],
                     )
-                    : Column(
+                    : Column( //If portrait, show one below the other
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Center(child: productImage),
@@ -430,22 +443,28 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     );
   }
 
+  //Widget for related products
   Widget _buildRelatedProducts() {
     return FutureBuilder<List<Product>>(
       future: _relatedProductsFuture,
       builder: (context, snapshot) {
+        //Handle loading state
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
+        }
+        //Handle error state
+        else if (snapshot.hasError) {
           return Text("Error: ${snapshot.error}");
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        }
+        //Handle empty state
+        else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Text("No related products found");
         }
 
-        final products = snapshot.data!.take(6).toList();
+        final products = snapshot.data!.take(6).toList(); //Takes only 6 products
         final screenOrientation = MediaQuery.of(context).orientation;
         final crossAxisCount =
-            screenOrientation == Orientation.landscape ? 3 : 2;
+            screenOrientation == Orientation.landscape ? 3 : 2; //Shows 3 and 2 items per row in landscape and portrait respectively
         final childAspectRatio =
             screenOrientation == Orientation.landscape
                 ? (100 / 110)
@@ -473,7 +492,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   MaterialPageRoute(
                     builder:
                         (context) =>
-                            ProductDetailsPage(productId: related.productID),
+                            ProductDetailsPage(productId: related.productID), //Navigate to the product details page
                   ),
                 );
               },

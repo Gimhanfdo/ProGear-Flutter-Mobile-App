@@ -7,7 +7,7 @@ class ReviewService {
   static const String baseUrl = "https://progear-laravel-website-production.up.railway.app/api/reviews";
   static final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  // Fetch all reviews for a product
+  // Function to fetch all reviews for a product
   static Future<List<Review>> getProductReviews(int productId) async {
     final token = await _storage.read(key: 'auth_token');
 
@@ -27,7 +27,7 @@ class ReviewService {
     }
   }
 
-  // Submit a new review
+  // Funcion to submit a new review
   static Future<bool> submitReview(
     int productId,
     int rating,

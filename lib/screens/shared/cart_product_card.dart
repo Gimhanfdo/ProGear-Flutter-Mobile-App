@@ -57,9 +57,9 @@ class CartProductCard extends StatelessWidget {
                 icon: const Icon(Icons.remove_circle_outline),
                 onPressed: () {
                   if (quantity > 1) {
-                    cartProvider.updateQuantity(productId, quantity - 1);
+                    cartProvider.updateQuantity(productId, quantity - 1); //Callsthe updateQuantity function in the cart provider
                   } else {
-                    cartProvider.removeItem(productId);
+                    cartProvider.removeItem(productId); //Calls the removeItem function in the cart provider
                   }
                 },
               ),
@@ -73,7 +73,7 @@ class CartProductCard extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text(
-                          'This product has limited stock available',
+                          'This product has limited stock available', //Show a snackbar message if quantity is limited
                         ),
                       ),
                     );

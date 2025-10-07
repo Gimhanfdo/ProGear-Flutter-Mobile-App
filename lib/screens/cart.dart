@@ -13,18 +13,18 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  bool _isLoading = true;
+  bool _isLoading = true; // To show a loading indicator while fetching cart data
 
   @override
   void initState() {
     super.initState();
-    _fetchCart();
+    _fetchCart(); // Fetch cart data when the page loads
   }
 
-  void _fetchCart() async {
+  void _fetchCart() async { 
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
     try {
-      await cartProvider.fetchCart();
+      await cartProvider.fetchCart(); // Fetch the user's cart from the CartProvider
     } catch (e) {
       debugPrint('Failed to fetch cart: $e');
     } finally {
@@ -40,10 +40,12 @@ class _CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     final screenOrientation = MediaQuery.of(context).orientation;
 
+    // Use Consumer to rebuild UI automatically when the cart provider updates
     return Consumer<CartProvider>(
       builder: (context, cart, child) {
         final cartItems = cart.items;
 
+        // Show loading spinner while fetching data
         if (_isLoading) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
@@ -51,7 +53,7 @@ class _CartPageState extends State<CartPage> {
         }
 
         return Scaffold(
-          appBar: screenOrientation == Orientation.landscape
+          appBar: screenOrientation == Orientation.landscape //Shows the CustomAppBar only in portrait
               ? null
               : const CustomAppBar(),
           body: cartItems.isEmpty
@@ -69,14 +71,14 @@ class _CartPageState extends State<CartPage> {
                         ),
                         const SizedBox(height: 16),
                         const Text(
-                          'Your cart is empty',
+                          'Your cart is empty', //Shows a cart is empty message when cartItems is empty
                           style: TextStyle(fontSize: 20),
                         ),
                       ],
                     ),
                   ),
                 )
-              : Column(
+              : Column( //If cartItems is not empty
                   children: [
                     Expanded(
                       child: ListView(
@@ -151,7 +153,7 @@ class _CartPageState extends State<CartPage> {
                               backgroundColor: Colors.teal.shade700,
                             ),
                             child: const Text(
-                              'Proceed to Checkout',
+                              'Proceed to Checkout', // Navigate to CheckoutPage
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,

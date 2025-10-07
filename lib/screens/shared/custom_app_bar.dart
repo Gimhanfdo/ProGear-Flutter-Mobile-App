@@ -21,7 +21,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: [
-        //Static notifications icon
+        //Profile page Icon
         IconButton(
           onPressed: () {
             Navigator.push(
@@ -31,6 +31,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           },
           icon: Icon(Icons.person),
         ),
+        //Wishlist page icon
         IconButton(
           onPressed: () {
             Navigator.push(

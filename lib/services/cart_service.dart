@@ -8,7 +8,7 @@ class CartService {
   static const String baseUrl = "https://progear-laravel-website-production.up.railway.app/api/cart";
   static final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  // Get cart from API
+  // Function to fetch cart from API
   static Future<List<CartItem>> getCart() async {
     final token = await _storage.read(key: 'auth_token');
     final response = await http.get(
@@ -31,7 +31,7 @@ class CartService {
     }
   }
 
-  // Add product to cart
+  // Function to add product to cart
   static Future<void> addItem(int productId, int quantity) async {
     final token = await _storage.read(key: 'auth_token');
     final response = await http.post(
@@ -48,7 +48,7 @@ class CartService {
     }
   }
 
-  // Update quantity of a cart item
+  // Function to update quantity of a cart item
   static Future<void> updateItem(int itemId, int quantity) async {
     final token = await _storage.read(key: 'auth_token');
     final response = await http.put(
@@ -62,7 +62,7 @@ class CartService {
     }
   }
 
-  // Remove cart item
+  // Function to remove cart item
   static Future<void> removeItem(int itemId) async {
     final token = await _storage.read(key: 'auth_token');
     final response = await http.delete(
@@ -75,7 +75,7 @@ class CartService {
     }
   }
 
-  // Clear entire cart
+  // Function to clear cart
   static Future<void> clearCart() async {
     final token = await _storage.read(key: 'auth_token');
     final response = await http.delete(

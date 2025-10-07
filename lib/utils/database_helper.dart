@@ -3,19 +3,21 @@ import 'package:path/path.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class DatabaseHelper {
+  // Singleton instance to ensure only one database helper exists
   static final DatabaseHelper _instance = DatabaseHelper._internal();
   factory DatabaseHelper() => _instance;
 
   static Database? _database;
+  // Database configuration
   static const _dbName = 'progear_local.db';
   static const _dbVersion = 1;
 
-  static const _wishlistTable = 'wishlist';
+  static const _wishlistTable = 'wishlist'; // Table name for wishlist
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   DatabaseHelper._internal();
 
-  // Get database instance
+  // Get database instance 
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDatabase();
@@ -24,9 +26,10 @@ class DatabaseHelper {
 
   // Initialize database
   Future<Database> _initDatabase() async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, _dbName);
+    final dbPath = await getDatabasesPath(); // Get default database path
+    final path = join(dbPath, _dbName); // Full path with file name
 
+    // Opens a DB connection
     return await openDatabase(
       path,
       version: _dbVersion,
@@ -48,12 +51,11 @@ class DatabaseHelper {
     ''');
   }
 
-  // Insert into wishlist
+  // Function to insert into wishlist
   Future<void> addToWishlist(Map<String, dynamic> product) async {
     final db = await database;
     final userId = await _secureStorage.read(key: 'user_id');
 
-    // each wishlist item is linked to a specific logged-in user
     await db.insert(
       _wishlistTable,
       {
@@ -63,14 +65,14 @@ class DatabaseHelper {
         'product_price': product['price'],
         'product_image': product['image'],
       },
-      conflictAlgorithm: ConflictAlgorithm.replace,
+      conflictAlgorithm: ConflictAlgorithm.replace, // Replace if already exists
     );
   }
 
-  // Retrieve wishlist for the current user
+  // Function to retrieve wishlist for the current user
   Future<List<Map<String, dynamic>>> getWishlist() async {
     final db = await database;
-    final userId = await _secureStorage.read(key: 'user_id');
+    final userId = await _secureStorage.read(key: 'user_id'); // Get current user ID from secure storage
     return await db.query(
       _wishlistTable,
       where: 'user_id = ?',
@@ -78,10 +80,10 @@ class DatabaseHelper {
     );
   }
 
-  // Remove a product from wishlist
+  // Function to remove a product from wishlist
   Future<void> removeFromWishlist(int productId) async {
     final db = await database;
-    final userId = await _secureStorage.read(key: 'user_id');
+    final userId = await _secureStorage.read(key: 'user_id'); // Get current user ID from secure storage
     await db.delete(
       _wishlistTable,
       where: 'user_id = ? AND product_id = ?',
@@ -89,10 +91,10 @@ class DatabaseHelper {
     );
   }
 
-  // Clear wishlist for a specific user
+  // Function to clear wishlist for a specific user
   Future<void> clearWishlist() async {
     final db = await database;
-    final userId = await _secureStorage.read(key: 'user_id');
+    final userId = await _secureStorage.read(key: 'user_id'); // Get current user ID from secure storage
     await db.delete(
       _wishlistTable,
       where: 'user_id = ?',

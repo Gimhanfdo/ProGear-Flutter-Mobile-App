@@ -11,25 +11,30 @@ class ReviewsSection extends StatefulWidget {
 }
 
 class _ReviewsSectionState extends State<ReviewsSection> {
-  late Future<List<Review>> _reviewsFuture;
+  late Future<List<Review>> _reviewsFuture; // Future variable to store the async reviews list
 
   @override
   void initState() {
     super.initState();
-    _reviewsFuture = ReviewService.getProductReviews(widget.productId);
+    _reviewsFuture = ReviewService.getProductReviews(widget.productId); //Fetch the reviews when the widget initializes 
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return FutureBuilder<List<Review>>(
-      future: _reviewsFuture,
-      builder: (context, snapshot) {
+      future: _reviewsFuture, // The future that loads product reviews
+      builder: (context, snapshot) { //Snapshot holds information about the current state of the async call
+        // Handle loading state
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
+        }
+        // Handle error state 
+        else if (snapshot.hasError) {
           return Text("Error: ${snapshot.error}");
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        }
+        // Handle empty or no data state 
+        else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -54,6 +59,7 @@ class _ReviewsSectionState extends State<ReviewsSection> {
           );
         }
 
+        //Display reviews if they exist
         final reviews = snapshot.data!;
         return Padding(
           padding: const EdgeInsets.all(8.0),
@@ -66,7 +72,7 @@ class _ReviewsSectionState extends State<ReviewsSection> {
               ),
               const SizedBox(height: 10),
               ...reviews.map((review) {
-                return Card(
+                return Card( //Each review is displayed as a card widget
                   child: ListTile(
                     title: Text(review.userName),
                     subtitle: Text(review.reviewText),

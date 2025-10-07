@@ -14,25 +14,27 @@ class WishlistPage extends StatefulWidget {
 }
 
 class _WishlistPageState extends State<WishlistPage> {
-  late Future<List<Product>> _wishlistFuture;
+  late Future<List<Product>> _wishlistFuture; // Future holding wishlist items
 
   @override
   void initState() {
     super.initState();
-    _loadWishlist();
+    _loadWishlist(); // Load wishlist items when page is initialized
   }
 
+  // Fetch wishlist from WishlistService
   void _loadWishlist() {
     _wishlistFuture = WishlistService.getWishlist();
   }
 
+  // Function to remove a product from wishlist
   Future<void> _removeFromWishlist(int productId) async {
     await WishlistService.removeItem(productId);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Removed from wishlist')),
     );
     setState(() {
-      _loadWishlist();
+      _loadWishlist(); // Refresh the wishlist
     });
   }
 
@@ -49,11 +51,16 @@ class _WishlistPageState extends State<WishlistPage> {
       body: FutureBuilder<List<Product>>(
         future: _wishlistFuture,
         builder: (context, snapshot) {
+          //Handle loading state
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
+          }
+          //Handle error state 
+          else if (snapshot.hasError) {
             return Center(child: Text("Error: ${snapshot.error}"));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          }
+          //Handle empty state 
+          else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('Your wishlist is empty'));
           }
 
@@ -86,7 +93,7 @@ class _WishlistPageState extends State<WishlistPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            ProductDetailsPage(productId: item.productID),
+                            ProductDetailsPage(productId: item.productID), //Navigate to product details page
                       ),
                     );
                   },

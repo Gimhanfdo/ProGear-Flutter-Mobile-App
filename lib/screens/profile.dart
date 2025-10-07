@@ -13,15 +13,16 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final AuthService _authService = AuthService();
-  Map<String, dynamic>? _user;
+  Map<String, dynamic>? _user; // Stores user data
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadUser();
+    _loadUser(); // Load user info when page is initialized
   }
 
+  // Fetch user data from AuthService
   Future<void> _loadUser() async {
     try {
       final userData = await _authService.getUser();
@@ -37,6 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Function to logout user and navigate to login screen
   Future<void> _logout() async {
     await _authService.logout();
     if (!mounted) return;
@@ -47,6 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // Widget to display a single profile info row
   Widget profileRow(String title, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4),
@@ -72,7 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
         elevation: 1,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator()) // Show loading spinner while fetching data
           : _user == null
               ? const Center(child: Text("No user data"))
               : SingleChildScrollView(

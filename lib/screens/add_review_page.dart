@@ -13,28 +13,32 @@ class AddReviewPage extends StatefulWidget {
 class _AddReviewPageState extends State<AddReviewPage> {
   final _reviewController = TextEditingController();
   int _rating = 5;
-  bool _isSubmitting = false;
-  late stt.SpeechToText _speech;
-  bool _isListening = false;
+  bool _isSubmitting = false; // To disable the button
+  late stt.SpeechToText _speech; // Speech-to-text instance
+  bool _isListening = false; // Whether voice input is currently active
 
   @override
   void initState() {
     super.initState();
-    _speech = stt.SpeechToText();
+    _speech = stt.SpeechToText(); // Initialize the speech recognition instance
   }
 
   Future<void> _startListening() async {
     bool available = await _speech.initialize(
+      // Called when the listening status changes
       onStatus: (status) {
         if (status == 'done' || status == 'notListening') {
           setState(() => _isListening = false);
         }
       },
+      //Called if there's an error
       onError: (error) => setState(() => _isListening = false),
     );
 
+    // If microphone access is allowed
     if (available) {
       setState(() => _isListening = true);
+      // Begin listening and update text field with recognized words
       _speech.listen(onResult: (result) {
         setState(() {
           _reviewController.text = result.recognizedWords;
@@ -46,30 +50,33 @@ class _AddReviewPageState extends State<AddReviewPage> {
     }
   }
 
+  // Stop listening to voice input
   Future<void> _stopListening() async {
     await _speech.stop();
     setState(() => _isListening = false);
   }
 
+  //Submit the review
   Future<void> _submitReview() async {
     if (_reviewController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please enter your review before submitting.")),
+        const SnackBar(content: Text("Please enter your review before submitting.")), //To prevent empty submissions
       );
       return;
     }
 
-    setState(() => _isSubmitting = true);
+    setState(() => _isSubmitting = true); // Show loading state
 
-    final success = await ReviewService.submitReview(
+    final success = await ReviewService.submitReview( //Calls submitReview function in Review Service
       widget.productId,
       _rating,
       _reviewController.text.trim(),
     );
 
-    setState(() => _isSubmitting = false);
+    setState(() => _isSubmitting = false); // Stop loading
 
     if (!mounted) return;
+    // Show a success or failure snackbar message
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Review submitted successfully!")),
@@ -89,14 +96,14 @@ class _AddReviewPageState extends State<AddReviewPage> {
 
     final ratingStars = Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(5, (index) {
+      children: List.generate(5, (index) { //Generates a list of 5 stars
         return IconButton(
-          iconSize: 28, // slightly smaller
+          iconSize: 28, 
           icon: Icon(
-            index < _rating ? Icons.star_rounded : Icons.star_border_rounded,
+            index < _rating ? Icons.star_rounded : Icons.star_border_rounded, 
             color: Colors.amber.shade600,
           ),
-          onPressed: () => setState(() => _rating = index + 1),
+          onPressed: () => setState(() => _rating = index + 1), //Changes the rating based on the number of stars selected (index of the start list)
         );
       }),
     );
@@ -104,7 +111,7 @@ class _AddReviewPageState extends State<AddReviewPage> {
     final reviewInput = TextField(
       controller: _reviewController,
       maxLines: 5,
-      style: const TextStyle(fontSize: 14), // smaller text
+      style: const TextStyle(fontSize: 14), 
       decoration: InputDecoration(
         hintText: "Write your detailed review here...",
         border: OutlineInputBorder(
@@ -128,7 +135,7 @@ class _AddReviewPageState extends State<AddReviewPage> {
     final submitButton = SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: _isSubmitting ? null : _submitReview,
+        onPressed: _isSubmitting ? null : _submitReview, // Disable button while being submitted
         style: ElevatedButton.styleFrom(
           backgroundColor: theme.colorScheme.primary,
           foregroundColor: Colors.white,
@@ -137,7 +144,7 @@ class _AddReviewPageState extends State<AddReviewPage> {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
           child: Text(
-            _isSubmitting ? "Submitting..." : "Submit Review",
+            _isSubmitting ? "Submitting..." : "Submit Review", //Changes the text of the button accordingly
             style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
         ),
@@ -168,11 +175,12 @@ class _AddReviewPageState extends State<AddReviewPage> {
       appBar: AppBar(title: const Text("Add Review")),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          if (orientation == Orientation.landscape) {
+          if (orientation == Orientation.landscape) { //If orientation is lanscape,
             return Padding(
               padding: const EdgeInsets.all(20),
               child: Row(
                 children: [
+                  // Left side: product icon
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -191,6 +199,7 @@ class _AddReviewPageState extends State<AddReviewPage> {
                     ),
                   ),
                   const SizedBox(width: 30),
+                  //Right side: review form
                   Expanded(
                     flex: 2,
                     child: SingleChildScrollView(
@@ -204,7 +213,7 @@ class _AddReviewPageState extends State<AddReviewPage> {
               ),
             );
           } else {
-            return SingleChildScrollView(
+            return SingleChildScrollView( //If orientation is portrait
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

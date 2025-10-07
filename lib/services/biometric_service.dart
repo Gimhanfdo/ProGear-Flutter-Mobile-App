@@ -5,7 +5,7 @@ import 'package:local_auth/local_auth.dart';
 class BiometricService {
   final LocalAuthentication _auth = LocalAuthentication();
 
-  /// Check if biometrics are available
+  /// Check if biometrics are available in the device
   Future<bool> canCheckBiometrics() async {
     try {
       return await _auth.canCheckBiometrics;
@@ -25,8 +25,8 @@ class BiometricService {
         localizedReason: 'Confirm your identity to complete checkout',
         options: const AuthenticationOptions(
           biometricOnly: true,
-          stickyAuth: true,
-          useErrorDialogs: true,
+          stickyAuth: true, // Keep auth active if app goes to background
+          useErrorDialogs: true, // Show system error dialogs
         ),
       );
       return didAuthenticate;

@@ -48,7 +48,7 @@ class CheckoutProvider with ChangeNotifier {
         'paymentmethod': paymentMethod,
       });
 
-      // After success → clear checkout state
+      // Clear checkout state after success
       _checkoutData = null;
       _errorMessage = null;
       shippingAddress = '';

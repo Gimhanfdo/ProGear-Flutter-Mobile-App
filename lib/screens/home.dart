@@ -15,12 +15,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late Future<List<Product>> discountedProducts = Future.value([]);
+  late Future<List<Product>> discountedProducts = Future.value([]); // Stores the future list of fetched discounted products
 
   @override
   void initState() {
     super.initState();
-    discountedProducts = ProductService.getDiscountedProducts();
+    discountedProducts = ProductService.getDiscountedProducts(); // Fetch discounted products when the page initializes
   }
 
   @override
@@ -80,7 +80,7 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        ElevatedButton(
+                        ElevatedButton( // Button to navigate to Wishlist page
                           onPressed: () {
                             Navigator.push(
                               context,
@@ -115,15 +115,20 @@ class _HomeState extends State<Home> {
               ),
               const SizedBox(height: 12),
 
-              // FutureBuilder for API call
+              // FutureBuilder to fetch discounted products from the API
               FutureBuilder<List<Product>>(
                 future: discountedProducts,
                 builder: (context, snapshot) {
+                  // Handle loading state
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
+                  }
+                  // Handle error state 
+                  else if (snapshot.hasError) {
                     return Center(child: Text("Error: ${snapshot.error}"));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  } 
+                  // Handle empty state
+                  else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(
                       child: Text("No discounted products found."),
                     );
@@ -135,8 +140,8 @@ class _HomeState extends State<Home> {
                       screenOrientation == Orientation.landscape ? 3 : 2;
 
                   return GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true, //Takes only the needed height
+                    physics: const NeverScrollableScrollPhysics(), //Disable grid's own scrolling
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: crossAxisCount,
                       crossAxisSpacing: 12,
@@ -149,13 +154,13 @@ class _HomeState extends State<Home> {
                     itemCount: products.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        child: ProductCard(product: products[index]),
+                        child: ProductCard(product: products[index]), // Display a product card for each item in the list
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder:
-                                  (context) => ProductDetailsPage(
+                                  (context) => ProductDetailsPage( // Navigate to product details page when clicked
                                     productId: products[index].productID,
                                   ),
                             ),

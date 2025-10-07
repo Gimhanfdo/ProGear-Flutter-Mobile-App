@@ -21,7 +21,7 @@ class CheckoutPage extends StatefulWidget {
 }
 
 class _CheckoutPageState extends State<CheckoutPage> {
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>(); // Form key for validating checkout form
   final shippingAddressController = TextEditingController();
   final creditCardNumberController = TextEditingController();
   final expiryDateController = TextEditingController();
@@ -51,9 +51,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return true;
   }
 
+  //Function to fetch location and convert to an address
   Future<void> _getCurrentLocation() async {
     try {
-      // Check permission
+      // Check Location permission
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
@@ -66,6 +67,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         }
       }
 
+      // If permissions are permanently denied
       if (permission == LocationPermission.deniedForever) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -96,7 +98,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         String fullAddress =
             "${place.name}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
         setState(() {
-          shippingAddressController.text = fullAddress;
+          shippingAddressController.text = fullAddress; //Address is displayed in the shipping address text field
         });
       }
     } catch (e) {
@@ -107,7 +109,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
   }
 
-  /// Place order through CheckoutProvider
+  // Place order through Checkout Provider
   Future<void> _placeOrder(BuildContext context) async {
     final checkoutProvider = Provider.of<CheckoutProvider>(
       context,
@@ -121,15 +123,18 @@ class _CheckoutPageState extends State<CheckoutPage> {
       return;
     }
 
+    // Validate card details if the payment method is card
     if (paymentMethod == 'Card' && !_validateCardDetails(context)) return;
 
     try {
+      // Assign user inputs to provider
       checkoutProvider.shippingAddress = shippingAddress;
       checkoutProvider.paymentMethod = paymentMethod;
       final success = await checkoutProvider.placeOrder();
 
       if (!mounted) return;
 
+      // Show success dialog and navigate to home page when clicked on 'OK'
       if (success && mounted) {
         showDialog(
           context: context,
@@ -168,6 +173,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         MediaQuery.of(context).orientation == Orientation.landscape;
     final theme = Theme.of(context);
 
+    // Section header widget
     Widget sectionTitle(String title) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -181,10 +187,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
       ],
     );
 
+    // Use Consumer2 to access both cart and checkout providers
     return Consumer2<CartProvider, CheckoutProvider>(
       builder: (context, cartProvider, checkoutProvider, _) {
         final cartItems = cartProvider.items.values.toList();
 
+        // Checkout Form widget (Shipping address + Payment section)
         Widget checkoutForm = Form(
           key: _formKey,
           child: Column(
@@ -226,6 +234,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   const Text("Card Payment"),
                 ],
               ),
+
+              // Show card input fields only if "Card" is selected
               if (paymentMethod == 'Card') ...[
                 Row(
                   children: [
@@ -289,6 +299,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           ),
         );
 
+        //Order summary widget
         Widget orderSummary = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -296,7 +307,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ...cartItems
                 .map(
                   (item) =>
-                      CheckoutProductCard(productId: item.product.productID),
+                      CheckoutProductCard(productId: item.product.productID), //Shows a card item for every product in cartItems
                 )
                 .toList(),
             Divider(color: theme.colorScheme.inversePrimary),
@@ -321,6 +332,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
                               if (!mounted) return;
 
+                              //Display message if authentication is falled or cancelled
                               if (!isAuthenticated) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
@@ -360,7 +372,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             padding: const EdgeInsets.all(8),
             child:
                 isLandscape
-                    ? Row(
+                    ? Row( //Shows the checkoutForm widget on the left side and orderSummary widget on the right side in landscape
                       children: [
                         Expanded(
                           child: SingleChildScrollView(child: checkoutForm),
@@ -371,7 +383,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         ),
                       ],
                     )
-                    : ListView(
+                    : ListView( //Shows both widgets as a single column in portrait
                       children: [
                         checkoutForm,
                         const SizedBox(height: 12),
@@ -384,6 +396,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
+  //Widget for the rows in the orderSummaryWidget
   Widget _summaryRow(String label, double amount, {bool highlight = false}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

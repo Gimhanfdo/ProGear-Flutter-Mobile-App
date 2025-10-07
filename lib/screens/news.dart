@@ -13,13 +13,13 @@ class NewsPage extends StatefulWidget {
 
 class _NewsPageState extends State<NewsPage> {
   final NewsService _newsService = NewsService();
-  late Future<List<dynamic>> _newsFuture;
+  late Future<List<dynamic>> _newsFuture; // Future that holds the list of news articles fetched
 
   @override
   void initState() {
     super.initState();
-    showConnectivitySnackBar(context);
-    _newsFuture = _newsService.fetchCricketNews();
+    showConnectivitySnackBar(context); // Show internet connectivity status using a SnackBar
+    _newsFuture = _newsService.fetchCricketNews(); // Fetch cricket news when the page is loaded
   }
 
   @override
@@ -29,15 +29,20 @@ class _NewsPageState extends State<NewsPage> {
       body: FutureBuilder<List<dynamic>>(
         future: _newsFuture,
         builder: (context, snapshot) {
+          // Handle loading state
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
+          }
+          // Handle error state 
+          else if (snapshot.hasError) {
             return Center(child: Text("Error: ${snapshot.error}"));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          }
+          // Handle empty state 
+          else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text("No news available"));
           }
 
-          final newsList = snapshot.data!;
+          final newsList = snapshot.data!; // List of news articles
 
           return ListView.builder(
             itemCount: newsList.length,
@@ -52,7 +57,7 @@ class _NewsPageState extends State<NewsPage> {
               String formattedDate = "";
               if (publishedAt != null) {
                 try {
-                  final dateTime = DateTime.parse(publishedAt);
+                  final dateTime = DateTime.parse(publishedAt); // Format the published date
                   formattedDate =
                       "${dateTime.day}-${dateTime.month}-${dateTime.year} ${dateTime.hour}:${dateTime.minute}";
                 } catch (e) {
@@ -60,6 +65,7 @@ class _NewsPageState extends State<NewsPage> {
                 }
               }
 
+              // Each article is displayed as a card
               return Card(
                 margin: const EdgeInsets.all(8),
                 child: ListTile(

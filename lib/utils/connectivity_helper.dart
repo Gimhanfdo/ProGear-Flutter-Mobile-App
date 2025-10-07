@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+//Function to show a snack bar if offline
 Future<void> showConnectivitySnackBar(BuildContext context) async {
   var result = await Connectivity().checkConnectivity();
   // ignore: unrelated_type_equality_checks

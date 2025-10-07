@@ -12,7 +12,7 @@ class NewsService {
       // Check internet connectivity
       var connectivityResult = await Connectivity().checkConnectivity();
 
-      // If connected
+      // If connected, fetch news from News API
       // ignore: unrelated_type_equality_checks
       if (connectivityResult != ConnectivityResult.none) {
         final response = await http.get(url);
@@ -33,7 +33,7 @@ class NewsService {
     }
   }
 
-  // Function to load fallback cricket news
+  // Function to load fallback cricket news from local JSON file
   Future<List<dynamic>> loadFallbackNews() async {
     try {
       final String response = await rootBundle.loadString('assets/files/fallback_news.json');
